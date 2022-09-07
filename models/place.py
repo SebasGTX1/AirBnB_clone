@@ -1,14 +1,19 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
+from curses import meta
 from importlib.metadata import metadata
+from models.amenity import Amenity
 from models.base_model import BaseModel
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from models.city import City
+from models.engine.db_storage import DBStorage
+from models.review import Review
 from models.user import User
-import models
 from sqlalchemy.orm import relationship
 from os import getenv
+
+from sqlalchemy import *
 
 metadata = Base.metadata
 
@@ -50,29 +55,38 @@ class Place(BaseModel, Base):
         longitude = 0.0
         amenity_ids = []
 
-    def __init__(self, *args, **kwargs):
-            """initializes Place"""
-            super().__init__(*args, **kwargs)
+        if getenv("HBNB_TYPE_STORAGE") == "db":
+            reviews = relationship("Review", backref='place', cascade="all, delete")
+            amenities = relationship("Amenity", secondary=place_amenity,
+                            viewonly=False, cascade="all, delete",
+                            backref="places")
+        else:
+            from models import DBStorage
+            @property
+            def reviews(self):
+                """ Returns the list of Review instances with
+                    place_id equals to the current Place.id
+                """
+                reviews = []
+                for place in DBStorage.all(Review).values():
+                    if place.id == self.place_id:
+                        reviews.append(place)
+                return reviews
 
-    if models.storage_t != 'db':
-        @property
-        def reviews(self):
-            """getter attribute returns the list of Review instances"""
-            from models.review import Review
-            review_list = []
-            all_reviews = models.storage.all(Review)
-            for review in all_reviews.values():
-                if review.place_id == self.id:
-                    review_list.append(review)
-            return review_list
+            @property
+            def amenities(self):
+                """ Function that returns the list of City
+                instances with state_id """
 
-        @property
-        def amenities(self):
-            """getter attribute returns the list of Amenity instances"""
-            from models.amenity import Amenity
-            amenity_list = []
-            all_amenities = models.storage.all(Amenity)
-            for amenity in all_amenities.values():
-                if amenity.place_id == self.id:
-                    amenity_list.append(amenity)
-            return amenity_list
+                amenities_list = []
+                for amenity in DBStorage.all(Amenity).values():
+                    if amenity.id == self.amenity_id:
+                        amenities_list.append(amenity)
+                return amenities_list
+ 
+
+            @amenities.setter 
+            def ameninities(self, arg):
+                """ Function setter amenities """
+                if arg.__class__.name__ == "Amenity":
+                    self.amenity_ids.append(arg)
