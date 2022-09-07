@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """New engine DBStorage"""
+from unicodedata import name
 from models.base_model import BaseModel, Base
 from models.amenity import Amenity
 from models.city import City
@@ -16,6 +17,9 @@ class DBStorage:
     """Private class attributes:"""
     __engine = None
     __session = None
+    classes = {"User": User, "State": State,
+               "City": City, "Amenity": Amenity,
+               "Place": Place, "Review": Review}
 
     def __init__(self):
         """ Public instance methods:
@@ -39,7 +43,7 @@ class DBStorage:
         mydict = {}
         if cls is None:
             for myclass in self.classes:
-                result = self.__session.query(myclass).all()
+                result = self.__session.query(self.classes[myclass]).all()
                 for obj in result:
                     mydict["{}.{}".format(obj.__class__, obj.id)] = obj
         else:
