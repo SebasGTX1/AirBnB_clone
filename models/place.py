@@ -50,25 +50,37 @@ class Place(BaseModel, Base):
         longitude = 0.0
         amenity_ids = []
 
-if models.storage_t != 'db':
-        @property
-        def reviews(self):
-            """List Reviews"""
-            from models.review import Review
-            review_list = []
-            all_reviews = models.storage.all(Review)
-            for review in all_reviews.values():
-                if review.place_id == self.id:
-                    review_list.append(review)
-            return review_list
+        if getenv('HBNB_TYPE_STORAGE') != 'db':
+
+            @property
+            def reviews(self):
+                """Reviewis
+                """
+                my_dict = models.storage.all('Review')
+                my_list = []
+                for review in my_dict.values():
+                    if review.place_id == self.id:
+                        my_list.append(review)
+
+                return my_list
 
         @property
         def amenities(self):
-            """Amenities"""
-            from models.amenity import Amenity
-            amenity_list = []
-            all_amenities = models.storage.all(Amenity)
-            for amenity in all_amenities.values():
+            """
+            returns the list of Amenity instances based on the
+            attribute amenity_ids
+            """
+            my_dict = models.storage.all('Amenity')
+            for amenity in my_dict.values():
                 if amenity.place_id == self.id:
-                    amenity_list.append(amenity)
-            return amenity_list
+                    amenities_ids.append(amenity)
+            return self.amenities_ids
+
+        @amenities.setter
+        def amenities(self, obj=None):
+            """
+            handles append method for adding an Amenity.id to the
+            attribute amenity_ids
+            """
+            if type(obj) == 'Amenity':
+                self.amenities_ids.append(obj.id)
