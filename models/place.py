@@ -37,19 +37,22 @@ class Place(BaseModel, Base):
         from models import storage
         @property
         def reviews(self):
-            """ Returns the list of Review instances with
-                place_id equals to the current Place.id
+            """ 
+            Returns the list of Review instances with
+            place_id equals to the current Place.id
             """
-            reviews = []
+            reviews_list = []
             for place in storage.all(Review).values():
                 if place.id == self.place_id:
-                    reviews.append(place)
-            return reviews
+                    reviews_list.append(place)
+            return reviews_list
 
         @property
         def amenities(self):
-            """ Function that returns the list of City
-            instances with state_id """
+            """ 
+            Function that returns the list of City
+            instances with state_id
+            """
 
             amenities_list = []
             for amenity in storage.all(Amenity).values():
