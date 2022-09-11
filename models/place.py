@@ -8,9 +8,10 @@ from os import getenv
 from models.amenity import Amenity
 
 place_amenity = Table('place_amenity', Base.metadata, Column('place_id',
-                String(60), ForeignKey('places.id'), nullable=False),
-                Column('amenity_id', String(60),
-                ForeignKey('amenities.id'), nullable=False))
+                      String(60), ForeignKey('places.id'), nullable=False),
+                      Column('amenity_id', String(60),
+                      ForeignKey('amenities.id'), nullable=False))
+
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -29,16 +30,17 @@ class Place(BaseModel, Base):
     amenity_ids = []
 
     if getenv("HBNB_TYPE_STORAGE") == "db":
-        reviews = relationship("Review", backref='place', cascade="all, delete")
+        reviews = relationship("Review", backref='place',
+                               cascade="all, delete")
         amenities = relationship("Amenity", secondary=place_amenity,
-                            viewonly=False, cascade="all, delete",
-                            backref="places")
-    
+                                 viewonly=False, cascade="all, delete",
+                                 backref="places")
+
     else:
-        from models import storage
+
         @property
         def reviews(self):
-            """ 
+            """
             Returns the list of Review instances with
             place_id equals to the current Place.id
             """
@@ -51,7 +53,7 @@ class Place(BaseModel, Base):
 
         @property
         def amenities(self):
-            """ 
+            """
             Function that returns the list of City
             instances with state_id
             """
@@ -61,9 +63,8 @@ class Place(BaseModel, Base):
                 if amenity.id == self.amenity_ids:
                     amenities_list.append(amenity)
             return amenities_list
- 
 
-        @amenities.setter 
+        @amenities.setter
         def ameninities(self, arg):
             """ Function setter amenities """
             if arg.__class__.name__ == "Amenity":
