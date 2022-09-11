@@ -5,6 +5,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
 from os import getenv
+from models.amenity import Amenity
 
 place_amenity = Table('place_amenity', Base.metadata, Column('place_id',
                 String(60), ForeignKey('places.id'), nullable=False),
@@ -41,6 +42,7 @@ class Place(BaseModel, Base):
             Returns the list of Review instances with
             place_id equals to the current Place.id
             """
+            from models import storage
             reviews_list = []
             for place in storage.all(Review).values():
                 if place.id == self.place_id:
@@ -53,10 +55,10 @@ class Place(BaseModel, Base):
             Function that returns the list of City
             instances with state_id
             """
-
+            from models import storage
             amenities_list = []
             for amenity in storage.all(Amenity).values():
-                if amenity.id == self.amenity_id:
+                if amenity.id == self.amenity_ids:
                     amenities_list.append(amenity)
             return amenities_list
  
