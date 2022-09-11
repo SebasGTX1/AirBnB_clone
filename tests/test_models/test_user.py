@@ -2,16 +2,18 @@
 """ """
 from tests.test_models.test_base_model import test_basemodel
 from models.user import User
+import unittest
 
 
 class test_User(test_basemodel):
     """ Testing module for user"""
 
+
 def __init__(self, *args, **kwargs):
-        """ Constructor method """
-        super().__init__(*args, **kwargs)
-        self.name = "User"
-        self.value = User
+    """ Constructor method """
+    super().__init__(*args, **kwargs)
+    self.name = "User"
+    self.value = User
 
     def test_first_name(self):
         """ Testing name """
@@ -32,3 +34,7 @@ def __init__(self, *args, **kwargs):
         """ Testing  password """
         new = self.value(password="helloworld")
         self.assertEqual(type(new.password), str)
+
+
+if __name__ == "__main__":
+    unittest.main()
