@@ -12,6 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 import os
 
+
 class DBStorage:
     """Private class attributes:"""
     __engine = None
