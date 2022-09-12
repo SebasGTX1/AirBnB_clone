@@ -25,6 +25,7 @@ def do_pack():
 def do_deploy(archive_path):
     """Fabric script that deploys an archive to web servers"""
     if not path.exists(archive_path):
+        print("if failure")
         return False
 
     try:
@@ -33,8 +34,8 @@ def do_deploy(archive_path):
         put(archive_path, "/tmp/")
         run('mkdir -p /data/web_static/releases/{}'.format(filename))
         run('tar -zxf /tmp/{} -C /data/web_static/releases/{}/'
-            .format(file, filename))
-        run('rm /tmp/{}'.format(file))
+            .format(file_path, filename))
+        run('rm /tmp/{}'.format(file_path))
         run('mv /data/web_static/releases/{}/web_static/*\
             /data/web_static/releases/{}/'.format(filename, filename))
         run('rm -rf /data/web_static/releases/{}/web_static'.format(filename))
@@ -44,4 +45,5 @@ def do_deploy(archive_path):
         print('New version deployed!')
         return True
     except Exception as e:
+        print(e)
         return False
