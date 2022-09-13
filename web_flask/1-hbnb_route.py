@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+"""
+Flask application
+"""
 from flask import Flask
 
 
@@ -8,11 +11,17 @@ app.url_map.strict_slashes = False
 
 @app.route("/")
 def index():
+    """
+    Index entry for route /
+    """
     return "Hello HBNB!"
 
 
 @app.route("/hbnb")
 def hbnb():
+    """
+    Index entry for route /hbnb
+    """
     return "HBNB"
 
 
