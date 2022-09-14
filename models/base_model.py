@@ -41,13 +41,17 @@ class BaseModel:
     def __str__(self):
         """Returns a string representation of the instance"""
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
+        dict_ = dict(self.__dict__)
+        if "_sa_instance_state" in dict_.keys():
+            del dict_["_sa_instance_state"]
+        return '[{}] ({}) {}'.format(cls, self.id, dict_)
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
         from models import storage
         self.updated_at = datetime.now()
         storage.new(self)
+        del self.__dict__["_sa_instance_state"]
         storage.save()
 
     def to_dict(self):
@@ -59,7 +63,7 @@ class BaseModel:
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
         if dictionary.get('_sa_instance_state') is not None:
-            dictionary.pop('_sa_instance_state')
+            del dictionary['_sa_instance_state']
         return dictionary
 
     def delete(self):
