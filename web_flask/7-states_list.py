@@ -20,9 +20,9 @@ def teardown_session(response):
 @app.route('/states_list')
 def states_list():
     """ index for the route /states_list route """
-    states = storage.all(State)
+    states = storage.all(State).values()
     return render_template('7-states_list.html',
-                           items=states.values())
+                           items=states)
 
 
 if __name__ == "__main__":
