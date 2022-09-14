@@ -12,13 +12,13 @@ app.url_map.strict_slashes = False
 
 
 @app.teardown_appcontext
-def teardown_session():
+def teardown_session(response):
     """ Teardown method"""
     storage.close()
 
 
 @app.route('/states_list')
-def states_list(response):
+def states_list():
     """ index for the route /states_list route """
     states = storage.all(State)
     return render_template('7-states_list.html',
